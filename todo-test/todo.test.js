@@ -60,7 +60,36 @@ test('User can delete a task', async({page})=>
         
         
 //Test 4: Test If a User Can Mark a Task as Complete
+  test('User mark a task as complete', async({page})=>{
+
+    await page.goto(pageUrl);
+    await page.fill('#task-input', 'Test1')
+    await page.click('#add-task');
+    const testText1 = await page.textContent('#task-list');
+    await expect(testText1).toContain('Test1');
+
+    await page.fill('#task-input', 'Test2')
+    await page.click('#add-task');
+    
+    const testText2 = await page.textContent('#task-list');
+    await expect(testText2).toContain('Test2');
+
+    const taskToComplete = "Test2";
         
+        const taskLocator = page.locator(`#task-list .task:has-text("${taskToComplete}")`);
+        
+          // Ensure the specific task is present
+        await expect(taskLocator).toContainText(taskToComplete);
+
+         // Click the complete button for the specific task
+        await taskLocator.locator('.task-complete').click();
+    
+          // Ensure the task is completed
+        await expect(page.locator('#task-list')).toHaveCount(1);
+
+        await expect(taskLocator).toHaveCount(1);
+        await expect(taskLocator).toContainText('Test2');
+  });     
         
         
 //Test 5: Test If a User Can Filter Tasks
